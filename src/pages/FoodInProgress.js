@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-// import AppContext from '../context/AppContext';
 import { idSearch } from '../api/foodsAPI';
 import shareIcon from '../images/shareIcon.svg';
 import './styles.css';
@@ -9,6 +8,8 @@ import {
   getFavorite,
   removeFavorite,
   saveFavorite,
+  setInProgressRecipe,
+  getInProgressRecipes,
 } from '../helpers/tokenLocalStorage';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
@@ -17,13 +18,11 @@ import treatRecipe from '../helpers/treatingDataForLocal';
 const copy = require('clipboard-copy');
 
 const five = 5;
-
 function FoodInProgress(props) {
   const { match: { params: { recipeId } } } = props;
   const [recipe, setRecipe] = useState({});
-  const [isFavorite, setIsFavorite] = useState(false);
   const history = useHistory();
-
+  const [isFavorite, setIsFavorite] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [checkedIndex, setCheckedIndex] = useState([]);
@@ -44,12 +43,13 @@ function FoodInProgress(props) {
     history.push('/done-recipes');
   };
 
-  const handleCheckBox = () => {
-    const obj = { id: recipeId, ingredients: checkedIndex };
-    console.log(obj);
-    // updateInProgressRecipes(obj, 'food');
+  const handleCheckBox = ({ target }, index) => {
+    if (!checkedIndex.includes(`${index}`)) {
+      setCheckedIndex([...checkedIndex, target.name]);
+      return;
+    }
+    setCheckedIndex(checkedIndex.filter((e) => +e !== index));
   };
-
   const handleClick = () => {
     const obj = {
       id: recipeId,
@@ -69,6 +69,20 @@ function FoodInProgress(props) {
     handleHeart();
   };
 
+  // Set recipe in storage
+  useEffect(() => {
+    const inProgressRecipesData = getInProgressRecipes();
+    if (inProgressRecipesData.meals[recipeId]) {
+      setCheckedIndex(inProgressRecipesData.meals[recipeId]);
+      return;
+    }
+    setInProgressRecipe(recipeId, 'meals', checkedIndex);
+  }, []);
+
+  useEffect(() => {
+    setInProgressRecipe(recipeId, 'meals', checkedIndex);
+  }, [checkedIndex, recipeId]);
+
   useEffect(() => {
     const getRecipe = async () => {
       setRecipe(await idSearch(recipeId));
@@ -84,25 +98,26 @@ function FoodInProgress(props) {
   const recipeKeys = Object.keys(recipe);
   const ingredients = recipeKeys.filter((item) => item.includes('strIngredient'));
   const measure = recipeKeys.filter((item) => item.includes('strMeasure'));
-  useEffect(() => {
-    const allIngredients = ingredients.filter((item) => recipe[item]
-      !== null && recipe[item] !== '');
 
-    if (allIngredients.length > 0 && allIngredients.length === checkedIndex.length) {
+  useEffect(() => {
+    const allIngredients = ingredients.filter(
+      (item) => recipe[item] !== null && recipe[item] !== '',
+    );
+
+    if (
+      allIngredients.length > 0
+      && allIngredients.length === checkedIndex.length
+    ) {
       return setIsDisabled(false);
     }
     return setIsDisabled(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedIndex]);
+  }, [checkedIndex.length, ingredients, recipe]);
+
   return (
     <div>
-      <h1 data-testid="recipe-title">{ recipe.strMeal }</h1>
+      <h1 data-testid="recipe-title">{recipe.strMeal}</h1>
       <img data-testid="recipe-photo" src={ recipe.strMealThumb } alt="" />
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ () => getLink() }
-      >
+      <button type="button" data-testid="share-btn" onClick={ () => getLink() }>
         <img src={ shareIcon } alt="shareIcon" />
       </button>
       {linkCopied && <span>Link copied!</span>}
@@ -113,8 +128,9 @@ function FoodInProgress(props) {
           data-testid="favorite-btn"
         />
       </button>
-      <p data-testid="recipe-category">{ recipe.strCategory }</p>
-      { ingredients.filter((item) => recipe[item] !== null && recipe[item] !== '')
+      <p data-testid="recipe-category">{recipe.strCategory}</p>
+      {ingredients
+        .filter((item) => recipe[item] !== null && recipe[item] !== '')
         .map((i, index) => (
           <label
             key={ index }
@@ -125,25 +141,20 @@ function FoodInProgress(props) {
               type="checkbox"
               id={ `ingredient-${index}` }
               name={ index }
-              onClick={ ({ target }) => {
-                if (checkedIndex.includes(`${index}`)) {
-                  setCheckedIndex(checkedIndex.filter((e) => +e !== index));
-                  handleCheckBox();
-                  return;
-                }
-                setCheckedIndex([...checkedIndex, target.name]);
-                handleCheckBox();
-              } }
+              onClick={ (e) => handleCheckBox(e, index) }
+              checked={ checkedIndex.some((item) => +item === index) }
             />
             <span
               key={ index }
-              className={ checkedIndex.some((item) => +item === index) ? 'checkbox' : '' }
+              className={
+                checkedIndex.some((item) => +item === index) ? 'checkbox' : ''
+              }
             >
-              { `${recipe[measure[index]]} ${recipe[i]}` }
+              {`${recipe[measure[index]]} ${recipe[i]}`}
             </span>
           </label>
         ))}
-      <p data-testid="instructions">{ recipe.strInstructions }</p>
+      <p data-testid="instructions">{recipe.strInstructions}</p>
       <p>Details</p>
       <button
         type="button"
