@@ -1,4 +1,7 @@
 {
   "root": true,
-  "extends": ["trybe-frontend"]
+  "extends": ["trybe-frontend"],
+  "rules": {
+    "sonarjs/cognitive-complexity": ["error", 19]
+  }
 }
