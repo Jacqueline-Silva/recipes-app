@@ -8,6 +8,8 @@ import {
   removeFavorite,
   saveFavorite,
   getFavorite,
+  setInProgressRecipe,
+  getInProgressRecipes,
 } from '../helpers/tokenLocalStorage';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
@@ -19,15 +21,11 @@ const five = 5;
 function DrinksInProgress(props) {
   const { match: { params: { recipeId } } } = props;
   const [recipe, setRecipe] = useState({});
-
   const { push } = useHistory();
-
-  const [linkCopied, setLinkCopied] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-
   const [checkedIndex, setCheckedIndex] = useState([]);
-  // const [usedIngredients, setUsedIngredients] = useState([]);
 
   const getLink = () => {
     const string = window.location.href;
@@ -43,6 +41,14 @@ function DrinksInProgress(props) {
   const finishRecipe = () => {
     treatRecipe(recipeId, recipe, 'drink');
     push('/done-recipes');
+  };
+
+  const handleCheckBox = ({ target }, index) => {
+    if (!checkedIndex.includes(`${index}`)) {
+      setCheckedIndex([...checkedIndex, target.name]);
+      return;
+    }
+    setCheckedIndex(checkedIndex.filter((e) => +e !== index));
   };
 
   const handleClick = () => {
@@ -64,11 +70,19 @@ function DrinksInProgress(props) {
     handleHeart();
   };
 
-  const handleCheckBox = () => {
-    const obj = { id: recipeId, ingredients: checkedIndex };
-    console.log(obj);
-    // updateInProgressRecipes(obj, 'drinks');
-  };
+  // Set recipe in storage
+  useEffect(() => {
+    const inProgressRecipesData = getInProgressRecipes();
+    if (inProgressRecipesData.cocktails[recipeId]) {
+      setCheckedIndex(inProgressRecipesData.cocktails[recipeId]);
+      return;
+    }
+    setInProgressRecipe(recipeId, 'cocktails', checkedIndex);
+  }, []);
+
+  useEffect(() => {
+    setInProgressRecipe(recipeId, 'cocktails', checkedIndex);
+  }, [checkedIndex, recipeId]);
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -95,7 +109,7 @@ function DrinksInProgress(props) {
     }
     return setIsDisabled(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedIndex]);
+  }, [checkedIndex.length, ingredients, recipe]);
 
   return (
     <div className="drinks-in-progress">
@@ -124,7 +138,7 @@ function DrinksInProgress(props) {
               alt="Favorito"
               className="icons"
               data-testid="favorite-btn"
-            />
+              />
           </button>
         </div>
       </div>

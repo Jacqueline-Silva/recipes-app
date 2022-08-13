@@ -21,13 +21,17 @@ export const getFavorite = () => {
 export const removeFavorite = (obj) => {
   const readFavorites = getFavorite();
   const newFavorites = readFavorites
-    .filter((e) => e !== null).filter((fav) => fav.id !== obj.id);
+    .filter((e) => e !== null)
+    .filter((fav) => fav.id !== obj.id);
   localStorage.setItem('favoriteRecipes', JSON.stringify(newFavorites));
 };
 
 export const saveFavorite = (obj) => {
   const readFavorites = getFavorite();
-  localStorage.setItem('favoriteRecipes', JSON.stringify([...readFavorites, obj]));
+  localStorage.setItem(
+    'favoriteRecipes',
+    JSON.stringify([...readFavorites, obj]),
+  );
 };
 export const getDoneRecipes = () => {
   if (!JSON.parse(localStorage.getItem('doneRecipes'))) {
@@ -43,9 +47,10 @@ export const saveDoneRecipes = (obj) => {
 
 export const getInProgressRecipes = () => {
   if (!JSON.parse(localStorage.getItem('inProgressRecipes'))) {
-    return localStorage.setItem('inProgressRecipes', JSON.stringify(
-      { meals: {}, cocktails: {} },
-    ));
+    localStorage.setItem(
+      'inProgressRecipes',
+      JSON.stringify({ meals: {}, cocktails: {} }),
+    );
   }
   return JSON.parse(localStorage.getItem('inProgressRecipes'));
 };
@@ -53,21 +58,38 @@ export const getInProgressRecipes = () => {
 export const updateInProgressRecipes = (obj, type) => {
   const previousRecipes = getInProgressRecipes();
   if (type === 'food') {
-    return localStorage.setItem('inProgressRecipes', JSON.stringify(
-      { ...previousRecipes,
+    return localStorage.setItem(
+      'inProgressRecipes',
+      JSON.stringify({
+        ...previousRecipes,
         meals: {
           ...previousRecipes.meals,
           [obj.id]: obj.ingredients,
-        } },
-    ));
+        },
+      }),
+    );
   }
-  localStorage.setItem('inProgressRecipes', JSON.stringify(
-    { ...previousRecipes,
+  localStorage.setItem(
+    'inProgressRecipes',
+    JSON.stringify({
+      ...previousRecipes,
       cocktails: {
         ...previousRecipes.cocktails,
         [obj.id]: obj.ingredients,
-      } },
-  ));
+      },
+    }),
+  );
+};
+
+export const setInProgressRecipe = (recipeId, type, ingredientsID = []) => {
+  const previousRecipes = getInProgressRecipes();
+  localStorage.setItem(
+    'inProgressRecipes',
+    JSON.stringify({
+      ...previousRecipes,
+      [type]: { ...previousRecipes[type], [recipeId]: ingredientsID },
+    }),
+  );
 };
 
 export const clearStorage = () => localStorage.clear();
