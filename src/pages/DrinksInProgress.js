@@ -138,7 +138,7 @@ function DrinksInProgress(props) {
               alt="Favorito"
               className="icons"
               data-testid="favorite-btn"
-              />
+            />
           </button>
         </div>
       </div>
