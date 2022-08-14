@@ -39,7 +39,6 @@ Esta aplicação faz uso de duas APIs, sendo uma com dados de comidas e outro co
 - React Context API
 - [API The MealsDB](https://www.themealdb.com/api.php)
 - [API The CocktailDB](https://www.thecocktaildb.com/api.php)
-
 - Trello
 - Zoom
 
