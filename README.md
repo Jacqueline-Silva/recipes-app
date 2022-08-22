@@ -46,8 +46,8 @@ Esta aplicação faz uso de duas APIs, sendo uma com dados de comidas e outro co
 
 ## :rocket: Equipe
 
-| [<img src="https://avatars.githubusercontent.com/u/93673362?s=100&v=4" width=115 > <br> <sub> Amanda Machado </sub>](https://github.com/mandioquynha) | [<img src="https://avatars.githubusercontent.com/u/94481237?s=100&v=4" width=115 ><br> <sub> Catherine Teles </sub>](https://github.com/catherineteles) | [<img src="https://avatars.githubusercontent.com/u/51039019?s=100&v=4" width=115 ><br> <sub> Nailton Junior </sub>](https://github.com/Naillton) | [<img src="https://avatars.githubusercontent.com/u/20843662?s=100&v=4" width=115 ><br> <sub> Thiago Corrêa </sub>](https://github.com/tcorrea) |
-| :---: | :---: | :---: | :---: |
+| [<img src="https://avatars.githubusercontent.com/u/93673362?s=100&v=4" width=115 > <br> <sub> Amanda Machado </sub>](https://github.com/mandioquynha) | [<img src="https://avatars.githubusercontent.com/u/94481237?s=100&v=4" width=115 ><br> <sub> Catherine Teles </sub>](https://github.com/catherineteles) | [<img src="https://avatars.githubusercontent.com/u/93751728?v=4" width=115 ><br> <sub> Jacqueline Silva </sub>](https://github.com/Jacqueline-Silva) | [<img src="https://avatars.githubusercontent.com/u/51039019?s=100&v=4" width=115 ><br> <sub> Nailton Junior </sub>](https://github.com/Naillton) | [<img src="https://avatars.githubusercontent.com/u/20843662?s=100&v=4" width=115 ><br> <sub> Thiago Corrêa </sub>](https://github.com/tcorrea) |
+| :---: | :---: | :---: | :---: | :---: |
 
 ## :pushpin: Rodando localmente
 
